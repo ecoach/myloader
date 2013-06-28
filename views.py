@@ -1,4 +1,14 @@
+from django.core.urlresolvers import reverse
+from django.views.generic import TemplateView
+from django.http import HttpResponse, HttpResponseRedirect
+from django.shortcuts import render_to_response, render
+from django.conf import settings
+from djangotailoring.views import TailoredDocView
+from djangotailoring.project import getsubjectloader
+from mynav.nav import main_nav, tasks_nav
+from .steps import steps_nav
 from mypump.csvfile import CsvFile, MapFile
+from .models import *
 from .forms import ( 
     Data_Loader_File_Upload_Form, 
     Data_Loader_File_Review_Form,
@@ -10,9 +20,9 @@ from .forms import (
 # Create your views here.
 
 def file_upload_view(request):
-    Log_Request(request)
+    #Log_Request(request)
 
-    configure_source_data(request.user.username)
+    #configure_source_data(request.user.username)
 
     profile = request.user.get_profile()
     prefs = profile.prefs
@@ -60,11 +70,12 @@ def file_upload_view(request):
             initial={'select_datafile' : df, 'select_idmap': mf}
         )
 
-    return render(request, 'mycoach/file_upload.html', {
+    return render(request, 'myloader/file_upload.html', {
+        "main_nav": main_nav(request.user, 'staff_view'),
+        "tasks_nav": tasks_nav(request.user, 'publisher'),
+        "steps_nav": steps_nav(request.user, 'review'),
         "form": form,
         "args": request.GET,
-        "nav_staff": StaffNav(request.path),
-        "nav_loader": DataLoaderNav(request.path),
         "active_csv_map": active_csv_map,
         "active_csv_data": active_csv_data
     })
@@ -105,9 +116,9 @@ def mp_map_download_view(request):
      
 
 def file_review_view(request):
-    Log_Request(request)
+    #Log_Request(request)
 
-    configure_source_data(request.user.username)
+    #configure_source_data(request.user.username)
 
     profile = request.user.get_profile()
     prefs = profile.prefs
@@ -211,11 +222,12 @@ def file_review_view(request):
             choices = data.heads_tuple()
         )
     
-    return render(request, 'mycoach/file_review.html', {
+    return render(request, 'myloader/file_review.html', {
+        "main_nav": main_nav(request.user, 'staff_view'),
+        "tasks_nav": tasks_nav(request.user, 'publisher'),
+        "steps_nav": steps_nav(request.user, 'review'),
         "form": form,
         "args": request.GET,
-        "nav_staff": StaffNav(request.path),
-        "nav_loader": DataLoaderNav(request.path),
         "active_row_cnt": data_file_row_cnt,
         "active_col_cnt": data_file_col_cnt,
         "active_id_column": data.get_id_header() + " ( column " + str(digestion.get_id_column()) + " )",
@@ -230,9 +242,9 @@ def file_review_view(request):
     })
 
 def data_digest_view(request):
-    Log_Request(request)
+    #Log_Request(request)
 
-    configure_source_data(request.user.username)
+    #configure_source_data(request.user.username)
 
     profile = request.user.get_profile()
     prefs = profile.prefs
@@ -352,11 +364,12 @@ def data_digest_view(request):
         data.execute(digestion.function, digestion_columns_select) 
     except:
         pass
-    return render(request, 'mycoach/data_digest.html', {
+    return render(request, 'myloader/data_digest.html', {
+        "main_nav": main_nav(request.user, 'staff_view'),
+        "tasks_nav": tasks_nav(request.user, 'publisher'),
+        "steps_nav": steps_nav(request.user, 'review'),
         "form": form,
         "args": request.GET,
-        "nav_staff": StaffNav(request.path),
-        "nav_loader": DataLoaderNav(request.path),
         "digestion_function": digestion_function,
         "digestion_columns": digestion_columns,
         "mts_char": mts_char_report,
@@ -364,9 +377,9 @@ def data_digest_view(request):
     })
 
 def mts_load_view(request):
-    Log_Request(request)
+    #Log_Request(request)
 
-    configure_source_data(request.user.username)
+    #configure_source_data(request.user.username)
 
     profile = request.user.get_profile()
     prefs = profile.prefs
@@ -456,20 +469,21 @@ def mts_load_view(request):
             initial = {'digestion_name' : digestion_name_reprint},
         )
 
-    return render(request, 'mycoach/mts_load.html', {
+    return render(request, 'myloader/mts_load.html', {
+        "main_nav": main_nav(request.user, 'staff_view'),
+        "tasks_nav": tasks_nav(request.user, 'publisher'),
+        "steps_nav": steps_nav(request.user, 'review'),
         "form": form,
         "args": request.GET,
-        "nav_staff": StaffNav(request.path),
-        "nav_loader": DataLoaderNav(request.path),
         "digestion_id" : digestion.id, 
         "digestion_name": digestion_name,
         "digestion": digestion,
     })
 
 def archive_view(request):
-    Log_Request(request)
+    #Log_Request(request)
 
-    configure_source_data(request.user.username)
+    #configure_source_data(request.user.username)
 
     profile = request.user.get_profile()
     prefs = profile.prefs
@@ -506,20 +520,22 @@ def archive_view(request):
     else:
         form = Data_Loader_Archive_Form()
 
-    return render(request, 'mycoach/archive_view.html', {
+    return render(request, 'myloader/archive.html', {
+        "main_nav": main_nav(request.user, 'staff_view'),
+        "tasks_nav": tasks_nav(request.user, 'publisher'),
+        "steps_nav": steps_nav(request.user, 'review'),
         "form": form,
         "args": request.GET,
-        "nav_staff": StaffNav(request.path),
-        "nav_loader": DataLoaderNav(request.path),
         "digestion_name": digestion.get_name(),
         "digestion": digestion,
     })
 
 def help_view(request):
 
-    return render(request, 'mycoach/help.html', {
-        "nav_staff": StaffNav(request.path),
-        "nav_loader": DataLoaderNav(request.path),
+    return render(request, 'myloader/help.html', {
+        "main_nav": main_nav(request.user, 'staff_view'),
+        "tasks_nav": tasks_nav(request.user, 'publisher'),
+        "steps_nav": steps_nav(request.user, 'review'),
     })
 
 
