@@ -1,10 +1,16 @@
 from django import forms
+from django.conf import settings
 #from mydata4.models import Source1
 from models import CsvDataFile, CsvMapFile, Digestion, Digestion_Column
-#from mydata4 import configure_source_data
 from datetime import datetime
 from time import ctime
 from django.shortcuts import redirect
+# mydataX imports
+from django.utils.importlib import import_module
+mydata = import_module(settings.MYDATA)
+Source1 = mydata.models.Source1
+myutils = import_module(settings.MYDATA + '.utils')
+configure_source_data = myutils.configure_source_data
 
 class Data_Loader_File_Upload_Form(forms.Form):
     csv_data_file = forms.FileField(required=False)
@@ -18,15 +24,14 @@ class Data_Loader_File_Upload_Form(forms.Form):
 
     def save_data(self, digestion):
         import os
-        #basepath = os.path.dirname(__file__) + '/uploads/'
-        relative_path = 'uploads/'
+        root_path = settings.DIR_UPLOAD_DATA
         # data file
         if self.cleaned_data["csv_data_file"] != None:
             csv = self.cleaned_data["csv_data_file"]
-            dpath = relative_path + 'datafiles/'
+            dpath = 'datafiles/'
             ff = CsvDataFile(name=csv.name, path=dpath)  # save the file
             ff.save()
-            destination = open(dpath + ff.disk_name(), 'wb+')
+            destination = open(root_path + dpath + ff.disk_name(), 'wb+')
             for chunk in csv.chunks():
                 destination.write(chunk)
             destination.close()
@@ -36,10 +41,10 @@ class Data_Loader_File_Upload_Form(forms.Form):
         # map file
         if self.cleaned_data["csv_idmap_file"] != None:
             csv = self.cleaned_data["csv_idmap_file"]
-            mpath = relative_path + 'mapfiles/'
+            mpath = 'mapfiles/'
             ff = CsvMapFile(name=csv.name, path=mpath)   # save the file
             ff.save()
-            destination = open(mpath + ff.disk_name(), 'wb+')
+            destination = open(root_path + mpath + ff.disk_name(), 'wb+')
             for chunk in csv.chunks():
                 destination.write(chunk)
             destination.close()

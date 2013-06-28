@@ -1,4 +1,4 @@
-{% extends 'mypublisher/data_loader.html' %}
+{% extends 'myloader/base_loader.html' %}
 
 {% block status_report %}
     <table width='100%'>
@@ -8,7 +8,7 @@
     Map file: {{active_csv_map}}
             </td>
             <td align='right'>
-            <a href={% url "mp_map_download" %}>Download mastering physics ID map from survey</a> 
+            <a href={% url "myloader:mp_map_download" %}>Download mastering physics ID map from survey</a> 
             </td>
         </tr>
     </table>

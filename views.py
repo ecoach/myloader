@@ -1,7 +1,7 @@
 from django.core.urlresolvers import reverse
 from django.views.generic import TemplateView
-from django.http import HttpResponse, HttpResponseRedirect
-from django.shortcuts import render_to_response, render
+from django.http import HttpResponse, HttpResponseRedirect, HttpResponseNotFound
+from django.shortcuts import render_to_response, render, redirect
 from django.conf import settings
 from djangotailoring.views import TailoredDocView
 from djangotailoring.project import getsubjectloader
@@ -16,6 +16,12 @@ from .forms import (
     Data_Loader_MTS_Load_Form,
     Data_Loader_Archive_Form
 )
+# mydataX imports
+from django.utils.importlib import import_module
+mydata = import_module(settings.MYDATA)
+Source1 = mydata.models.Source1
+myutils = import_module(settings.MYDATA + '.utils')
+configure_source_data = myutils.configure_source_data
 
 # Create your views here.
 
@@ -72,8 +78,8 @@ def file_upload_view(request):
 
     return render(request, 'myloader/file_upload.html', {
         "main_nav": main_nav(request.user, 'staff_view'),
-        "tasks_nav": tasks_nav(request.user, 'publisher'),
-        "steps_nav": steps_nav(request.user, 'review'),
+        "tasks_nav": tasks_nav(request.user, 'data_loader'),
+        "steps_nav": steps_nav(request.user, 'file_upload'),
         "form": form,
         "args": request.GET,
         "active_csv_map": active_csv_map,
@@ -91,7 +97,7 @@ def mp_map_download_view(request):
     # send the results
     try:
         file_name = "mp_name_map.csv"
-        file_path = os.path.dirname(__file__) + '/uploads/other/' + file_name
+        file_path = settings.DIR_UPLOAD_DATA + 'other/' + file_name
         
         f = open(file_path, 'w')
         # select MP_Name, user_id from mydata4_Source1 where not MP_Name=user_id group by MP_Name;  
@@ -136,11 +142,12 @@ def file_review_view(request):
         # anyone who has logged into the system is reserved from mapping
         reserved = User.objects.values_list('username')
         reserved = [x[0] for x in reserved]
-        map_file_path = settings.MYCOACH_PROJECT_ROOT + digestion.map_file.path
+        map_file_path = settings.DIR_UPLOAD_DATA + digestion.map_file.path
         mapp  = MapFile(map_file_path, digestion.map_file.disk_name(), reserved) # assume id in row 1
     except:
-        return redirect('file_upload_view')
-
+        pass 
+        # this should not be required
+        #return redirect('myloader:file_upload')
     # rows map
     try:
         map_file_row_cnt  = mapp.get_row_cnt() 
@@ -174,10 +181,10 @@ def file_review_view(request):
   
     # data  
     try: 
-        data_file_path = settings.MYCOACH_PROJECT_ROOT + digestion.data_file.path
+        data_file_path = settings.DIR_UPLOAD_DATA + digestion.data_file.path
         data  = CsvFile(data_file_path, digestion.data_file.disk_name(), digestion.get_id_column())
     except:
-        return redirect('file_upload_view')
+        return redirect('myloader:file_upload')
 
     # make id replacements in data
     try:
@@ -215,7 +222,7 @@ def file_review_view(request):
         if form.is_valid():
             # Do valid form stuff here
             form.save_data(digestion)
-            return redirect('file_review_view')
+            return redirect('myloader:file_review')
     else:
         form = Data_Loader_File_Review_Form(
             initial = {'select_id_column' : digestion.get_id_column()},
@@ -224,8 +231,8 @@ def file_review_view(request):
     
     return render(request, 'myloader/file_review.html', {
         "main_nav": main_nav(request.user, 'staff_view'),
-        "tasks_nav": tasks_nav(request.user, 'publisher'),
-        "steps_nav": steps_nav(request.user, 'review'),
+        "tasks_nav": tasks_nav(request.user, 'data_loader'),
+        "steps_nav": steps_nav(request.user, 'file_review'),
         "form": form,
         "args": request.GET,
         "active_row_cnt": data_file_row_cnt,
@@ -262,10 +269,12 @@ def data_digest_view(request):
         # anyone who has logged into the system is reserved from mapping
         reserved = User.objects.values_list('username')
         reserved = [x[0] for x in reserved]
-        map_file_path = settings.MYCOACH_PROJECT_ROOT + digestion.map_file.path
+        map_file_path = settings.DIR_UPLOAD_DATA + digestion.map_file.path
         mapp  = MapFile(map_file_path, digestion.map_file.disk_name(), reserved) # assume id in row 1
     except:
-        return redirect('file_upload_view')
+        pass 
+        # this should not be required
+        #return redirect('myloader:file_upload')
 
     # rows map
     try:
@@ -300,10 +309,10 @@ def data_digest_view(request):
 
     # data  
     try:
-        data_file_path = settings.MYCOACH_PROJECT_ROOT + digestion.data_file.path
+        data_file_path = settings.DIR_UPLOAD_DATA + digestion.data_file.path
         data  = CsvFile(data_file_path, digestion.data_file.disk_name(), digestion.get_id_column())
     except:
-        return redirect('file_upload_view')
+        return redirect('myloader:file_upload')
 
     # make id replacements in data
     try:
@@ -334,7 +343,6 @@ def data_digest_view(request):
         #digestion_columns = "*digestion columns not selectd*" 
         digestion_columns = []
         digestion_columns_select = []
-
     chars = Source1._meta.get_all_field_names()
     chars.remove('id')
     chars.remove('user_id')
@@ -352,7 +360,7 @@ def data_digest_view(request):
         if form.is_valid():
             # Do valid form stuff here
             form.save_data(digestion)
-            return redirect('data_digest_view')
+            return redirect('myloader:data_digest')
     else:
         form = Data_Loader_Data_Digest_Form(
             initial = {'digestion_function' : digestion_function_select, 'digestion_columns' : digestion_columns_select, 'mts_char' : mts_char},
@@ -366,8 +374,8 @@ def data_digest_view(request):
         pass
     return render(request, 'myloader/data_digest.html', {
         "main_nav": main_nav(request.user, 'staff_view'),
-        "tasks_nav": tasks_nav(request.user, 'publisher'),
-        "steps_nav": steps_nav(request.user, 'review'),
+        "tasks_nav": tasks_nav(request.user, 'data_loader'),
+        "steps_nav": steps_nav(request.user, 'data_digest'),
         "form": form,
         "args": request.GET,
         "digestion_function": digestion_function,
@@ -397,10 +405,12 @@ def mts_load_view(request):
         # anyone who has logged into the system is reserved from mapping
         reserved = User.objects.values_list('username')
         reserved = [x[0] for x in reserved]
-        map_file_path = settings.MYCOACH_PROJECT_ROOT + digestion.map_file.path
+        map_file_path = settings.DIR_UPLOAD_DATA + digestion.map_file.path
         mapp  = MapFile(map_file_path, digestion.map_file.disk_name(), reserved) # assume id in row 1
     except:
-        return redirect('file_upload_view')
+        pass 
+        # this should not be required
+        #return redirect('myloader:file_upload')
 
     # rows map
     try:
@@ -435,10 +445,10 @@ def mts_load_view(request):
 
     # data
     try:
-        data_file_path = settings.MYCOACH_PROJECT_ROOT + digestion.data_file.path
+        data_file_path = settings.DIR_UPLOAD_DATA + digestion.data_file.path
         data  = CsvFile(data_file_path, digestion.data_file.disk_name(), digestion.get_id_column())
     except:
-        return redirect('file_upload_view')
+        return redirect('myloader:file_upload')
         
     # make id replacements in data
     try:
@@ -461,9 +471,9 @@ def mts_load_view(request):
         if form.is_valid():
             # Do valid form stuff here
             if form.save_data(digestion, request.user, data):
-                return redirect('archive_view')
+                return redirect('myloader:archive')
             else:
-                return redirect('mts_load_view')
+                return redirect('myloader:mts_load')
     else:
         form = Data_Loader_MTS_Load_Form(
             initial = {'digestion_name' : digestion_name_reprint},
@@ -471,8 +481,8 @@ def mts_load_view(request):
 
     return render(request, 'myloader/mts_load.html', {
         "main_nav": main_nav(request.user, 'staff_view'),
-        "tasks_nav": tasks_nav(request.user, 'publisher'),
-        "steps_nav": steps_nav(request.user, 'review'),
+        "tasks_nav": tasks_nav(request.user, 'data_loader'),
+        "steps_nav": steps_nav(request.user, 'mts_load'),
         "form": form,
         "args": request.GET,
         "digestion_id" : digestion.id, 
@@ -516,14 +526,14 @@ def archive_view(request):
                 cc.id = None    # become new
                 cc.digestion_id = new.id
                 cc.save() 
-            return redirect('archive_view')
+            return redirect('myloader:archive')
     else:
         form = Data_Loader_Archive_Form()
 
     return render(request, 'myloader/archive.html', {
         "main_nav": main_nav(request.user, 'staff_view'),
-        "tasks_nav": tasks_nav(request.user, 'publisher'),
-        "steps_nav": steps_nav(request.user, 'review'),
+        "tasks_nav": tasks_nav(request.user, 'data_loader'),
+        "steps_nav": steps_nav(request.user, 'archive'),
         "form": form,
         "args": request.GET,
         "digestion_name": digestion.get_name(),
@@ -534,8 +544,8 @@ def help_view(request):
 
     return render(request, 'myloader/help.html', {
         "main_nav": main_nav(request.user, 'staff_view'),
-        "tasks_nav": tasks_nav(request.user, 'publisher'),
-        "steps_nav": steps_nav(request.user, 'review'),
+        "tasks_nav": tasks_nav(request.user, 'data_loader'),
+        "steps_nav": steps_nav(request.user, 'help'),
     })
 
 
