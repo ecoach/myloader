@@ -1,0 +1,69 @@
+{% extends 'mycoach/data_loader.html' %}
+
+{% block status_report %}
+    <table width='100%'>
+        <tr>
+            <td>
+    Data file: {{active_csv_data}} <br>
+    Map file: {{active_csv_map}}
+            </td>
+            <td align='right'>
+            <a href={% url "mp_map_download" %}>Download mastering physics ID map from survey</a> 
+            </td>
+        </tr>
+    </table>
+{% endblock %}
+
+
+{% block left_side %}
+
+<table>
+    <tr>
+        <td>Data files</td>
+    </tr>
+    <tr>
+        <td>
+            {{ form.select_datafile }}
+        </td>
+    </tr>
+    <tr>
+        <td>
+            {{ form.csv_data_file }}
+        </td>
+    </tr>
+    <tr>
+        <td valign='top'>
+        Upload a rectangular csv data file with one header row at top and one id column.</li>
+        </td>
+    </tr>
+</table>
+
+{% endblock %}
+
+
+{% block right_side %}
+
+<table>
+    <tr>
+        <td>Id map files</td>
+    </tr>
+    <tr>
+        <td>
+            {{ form.select_idmap }}
+        </td>
+    </tr>
+    <tr>
+        <td>
+            {{ form.csv_idmap_file }}
+        </td>
+    </tr>
+    <tr>
+        <td valign='top'>
+        Upload a two column csv file that maps ids in the input data file, column 1, to ids in the database, column 2.</li>
+        </td>
+    </tr>
+</table>
+
+{% endblock %}
+
+

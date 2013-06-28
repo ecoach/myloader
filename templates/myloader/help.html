@@ -1,0 +1,427 @@
+{% extends 'mycoach/data_loader.html' %}
+
+{% block status_report %}
+
+{% endblock %}
+
+{% block right_side %}
+
+<center><h2> FAQ about the Data Loader </h2></center>
+
+<table>
+    <tr>
+        <td>
+<b>What is a Digestion?</b>
+        </td>
+    </tr> 
+    <tr>
+        <td>
+<ul>
+    <li>
+The Data Loader is used to produce a Digestion which when executed loads data from input data files into ECoach
+    </li>
+    <li>
+A Digestion targets a single ECoach variable called an MTS Characteristic and can take it's input from one column, or combine several columns, of data in the input file
+    </li>
+    <li>
+A Digestion has various attributes associated with it which are configured using the Data Loader
+    </li>
+    <li>
+These attributes are:
+        <ol>
+            <li>
+        Digestion ID (fixed)
+            </li>
+            <li>
+        Digestion name
+            </li>
+            <li>
+        Input data file
+            </li>
+            <li>
+        List of columns from the input data file used to extract the value of a characteristic
+            </li>
+            <li>
+        Id column of the input data file 
+            </li>
+            <li>
+        Method of combining data in the selected columns of an input data file 
+            </li>
+            <li>
+        MTS characteristic to populate with result
+            </li>
+        </ol>
+    </li>
+</ul>
+        </td>
+    </tr> 
+    <tr>
+        <td>
+<b>Is it complicated to create a Digestion?</b>
+        </td>
+    </tr>
+    <tr>
+        <td>
+<ul>
+    <li>
+No, it's not complicated  
+    </li>
+    <li>
+There are a couple ways to do it, however, so if you know the steps and how they work, and how to watch for problems, then creating a Digestion to load data into ECoach will go smoothly
+    </li>
+</ul>
+        </td>
+    </tr>
+    <tr>
+        <td>
+<b>What if my input file doesn't have an ID column matching the ECoach user names?</b>
+        </td>
+    </tr>
+    <tr>
+        <td>
+<ul>
+    <li>
+This is where a Map files comes in, a Map file provides a Mapping between IDs in the data file and ECoach user names, or unique names
+    </li>
+<ul>
+        </td>
+    </tr>
+    <tr>
+        <td>
+<b>What file formats are used as input to a Digestion?</b>
+        </td>
+    </tr>
+    <tr>
+        <td>
+<ul>
+    <li>
+The input data file is a CSV file formatted as follows:
+        <ol>
+            <li>
+        The data file should have exactly one header row at the top of the file
+            </li>
+            <li>
+        The data file can have any number of data rows
+            </li>
+            <li>
+        The data file has at least 1 ID column which is used to match rows of data to ECoach users
+            </li>
+        </ol>
+    </li>
+    <li>
+The ID Map file is a CSV file formatted as follows:
+        <ol>
+            <li>
+        The left column should match IDs present in the input data file, and the right column matches ECoach user names
+            </li>
+            <li>
+        The IDs in the left column of the Map file must be unique
+            </li>
+            <li>
+        The IDs in the right column can be redundant allowing the same Map file to be used for remapping the same student from two different external systems
+            </li>
+            <li>
+        The IDs in the left column of the Map file should not match any of the ECoach user names to avoid privacy leaks, this violations is reported
+            </li>
+        </ol>
+    </li>
+</ul>
+        </td>
+    </tr>
+    <tr>
+        <td>
+<b>Do I just follow the steps 1 through 4 in order?</b>
+        </td>
+    </tr>
+    <tr>
+        <td>
+<ul>
+    <li>
+For the most part yes, but there are times when an out of sequences step is handy, so you are allowed to go back and forth between steps.
+    </li>
+    <li>
+We will start by looking at the simplest 1,2,3,4 step sequence and then explore when to use an out of sequence step
+    </li>
+    <li>
+While the four steps are different there are a few similarities between them
+        <ol>
+            <li>
+    The submit button is always in the same position at the top of the page  
+            </li>
+            <li>
+    Each step allows for you to make some choices in setting variables to configure the action for that step  
+            </li>
+            <li>
+    The value of the variables you can edit on a page is always displayed in the upper left one line below the submit button
+            </li>
+            <li>
+    The information that a step reports after running is laid out in different areas of the page depending on the step, however these report always have a grey background
+            </li>
+        <ol>
+    </li>
+        </td>
+    </tr>
+    <tr>
+        <td>
+<b>What happens when I click submit?</b>
+        </td>
+    </tr>
+    <tr>
+        <td>
+<ul>
+    <li>
+The details of what happens depend on the step, but in each case your request goes to the server, and the server does some work and returns the result
+    </li>
+    <li>
+The first three steps will do their action on the server, and return you to the same page updating it with the result report
+    </li>
+    <li>
+The 4th step, when committed actually runs the Digestion, archives it, creates a new Digestion, and redirects to the archive step upon completion
+    </li>
+    <li>
+Since steps 2, 3, and 4 require an input data file to execute they will redirect to step 1 if non has been selected
+    </li>
+</ul>
+        </td>
+    </tr>
+    <tr>
+        <td>
+<b>When is clicking submit necessary?</b>
+        </td>
+    </tr>
+    <tr>
+        <td>
+<ul>
+    <li>
+Each step should be submitted once and reviewed, especially when cloning is used.
+    </li>
+    <li>
+In order to actually *DO* a step, you will always have to press the submit button.  For example, if you cloned a Digestion that has column 33 selected, and then changed the input file to correct some mistake, you could run into trouble if the submit button were not used to resubmit step 3.  While column 33 doesn't appear selected, that's only because there's no column 33 to display in the new data file.  Without re-submitting step 3 column 33 would still be included as part of the Digestion attributes, causing problems since it doesn't exist in the new file.
+    </li>
+        </ul>
+        </td>
+    </tr>
+    <tr>
+        <td>
+<b>How is the archive used?</b>
+        </td>
+    </tr>
+    <tr>
+        <td>
+<ul>
+    <li>
+The archive is used to copy or clone a previous Digestion into the current working Digestion
+    </li>
+    <li>
+Once an archived Digestion is copied or cloned it can be explored for review
+    </li>
+    <li>
+A cloned Digestion can be modified as desired and then rerun
+    </li>
+    <li>
+Being able to clone a previous Digestion saves time when multiple characteristics are being extracted from the same data file, or when the same characteristic is being extracted from various data files
+    </li>
+</ul>
+        </td>
+    </tr>
+    <tr>
+        <td>
+<b> Which function or method should I choose?</b>
+        </td>
+    </tr>
+    <tr>
+        <td>
+<ul>
+    <li>
+        avg1([cols])
+        <ol>
+            <li>
+            Finds % of total points achieved from all assignments
+            </li>
+            <li>
+            Assignment contribution varies as it's determined by the sum of points achieved divided by the total points possible from all assignments
+            </li>
+            <li>
+            Use with numeric input
+            </li>
+        </ol>
+    </li>
+</ul>
+<ul>
+    <li>
+        avg2([cols])
+        <ol>
+            <li>
+            Finds the average number of points per assignment over all assignments
+            </li>
+            <li>
+            Value never converted to percent, simply the average of all the numbers 
+            </li>
+            <li>
+            Use with numeric input
+            </li>
+        </ol>
+    </li>
+</ul>
+<ul>
+    <li>
+        avg3([cols])
+        <ol>
+            <li>
+            Treats each assignement as same % of grade regardless of points
+            </li>
+            <li>
+            Assignemnt contribution constant no matter how many points
+            </li>
+            <li>
+            Use with numeric input
+            </li>
+        </ol>
+    </li>
+</ul>
+<ul>
+    <li>
+        pick(col)
+        <ol>
+            <li>
+            Use the value directly from the column selected
+            </li>
+            <li>
+            Pick the first column if multiple are selected
+            </li>
+            <li>
+            Use with any kind of input
+            </li>
+        </ol>
+    </li>
+</ul>
+<ul>
+    <li>
+The other options are not implemented yet!
+    </li>
+</ul>
+        </td>
+    </tr>
+</table>
+
+{% endblock %}
+
+
+
+{% block left_side %}
+<center><h2> Data Loader Usage Patterns </h2></center>
+
+<b>Ordinary sequence:</b>
+
+<dl>
+    <dt>
+    Step 1. Upload File 
+    </dt>
+        <dd> 
+        - Load a properly formatted input data file
+        </dd> 
+        <dd>
+        - Optionally load a properly formatted ID Map file
+        </dd> 
+    <dt>
+    Step 2. Review File 
+    </dt>
+        <dd> 
+        - Select the appropriate ID column from the data file
+        </dd> 
+        <dd> 
+        - Review the reports to verify files meet validity requirements and your expectations
+        </dd> 
+    <dt>
+    Step 3. Digest Data
+    </dt>
+        <dd> 
+        - Select the MTS characteristic targeted by the Digestion
+        </dd> 
+        <dd> 
+        - Select the data columns to combine when producing the value for the mts characteristic
+        </dd> 
+        <dd> 
+        - Select the method of combining data columns
+        </dd> 
+    <dt>
+    Step 4. Commit 
+    </dt>
+        <dd> 
+        - Name of the Digestion before committing
+        </dd> 
+</dl>
+
+<b>Cloning sequence:</b>
+
+<dl>
+    <dt>
+    Archive
+    </dt>
+        <dd>
+        - Clone an archived Digestion into the current working Digestion
+        </dd>
+    <dt>
+    Step 1. Upload File
+    </dt>
+        <dd>
+        - Review/modify the selected Data and Map files
+        </dd>
+    <dt>
+    Step 2. Review File
+    </dt>
+        <dd>
+        - Review/modify the selected ID column
+        </dd>
+    <dt>
+    Step 3. Digest Data
+    </dt>
+        <dd>
+        - Review/modify the MTS characteristic being targeted
+        </dd>
+        <dd>
+        - Review/modify the data columns selected
+        </dd>
+        <dd>
+        - Review/modify the selected method of combining data columns
+        </dd>
+    <dt>
+    Step 4. Commit
+    </dt>
+        <dd>
+        - Edit the name of the Digestion before committing
+        </dd>
+</dl>
+
+<b>Reviewing sequence:</b>
+
+<dl>
+    <dt>
+    Archive
+    </dt>
+        <dd>
+        - Clone an archived Digestion into the current working Digestion
+        </dd>
+    <dt>
+    Steps 1-4. Review
+        <dd>
+        - Explore the cloned Digestion by reviewing steps in any order
+        </dd>
+    </dt>
+</dl>
+
+Here are a couple screen cast demonstrations of how to use the Data Loader.
+<br>
+<br>
+<br>
+Reviewing Sequence:
+<br>
+<iframe width="560" height="315" src="https://www.youtube.com/embed/ckSiTGB1y_8" frameborder="0" allowfullscreen></iframe>
+<br>
+<br>
+<br>
+Ordinary Sequence:
+<br>
+<iframe width="560" height="315" src="https://www.youtube.com/embed/qA7cP2sIR64" frameborder="0" allowfullscreen></iframe>
+
+{% endblock %}

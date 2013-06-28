@@ -1,0 +1,36 @@
+{% extends 'mycoach/data_loader.html' %}
+
+{% block status_report %}
+
+    Digestion: {{digestion_name}}
+
+{% endblock %}
+
+
+{% block left_side %}
+
+    <table>
+        <tr>
+            <td>
+                Archived digestions:
+            </td>
+            <td>
+                {{ form.digestion }}
+            </td>
+        </tr>
+    </table>
+
+{% endblock %}
+
+
+{% block right_side %}
+
+    <table>
+        <tr>
+            <td class='wizard_report'>
+                {% include "mycoach/digestion_report.html" %}
+            </td>
+        </tr>
+    </table>
+
+{% endblock %}

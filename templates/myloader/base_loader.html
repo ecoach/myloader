@@ -1,0 +1,80 @@
+{% extends 'mycoach/new_base.html' %}
+
+{% comment %}
+comment exmaple
+{% endcomment %}
+
+
+{% block first_menu %}
+<table style="border-collapse: collapse;" border='0' class='menu1_options'>
+    <tr>
+        <td>&nbsp;&nbsp;&nbsp;</td>
+        <td class='menu1_option'>
+            <a href={% url "home" %}>Student Pages</a>
+        </td>
+        <td>&nbsp;&nbsp;&nbsp;</td>
+        <td class='menu1_option'>
+            <a href={% url "mylogout" %}>Logout: {{user.username}}</a>
+        </td>
+    </tr>
+</table>
+{% endblock %}
+
+{% block second_menu %}
+<table style="border-collapse: collapse;" border='0' class='menu2_options'>
+    <tr>
+        {% if user.is_authenticated %}  
+            {% for items in nav_staff.main_menu %}
+                <td class='{{items.1}}'> <a href="/{{items.2}}/"><nobr>{{items.0}}</nobr></a></td><td>&nbsp;</td>
+            {% endfor %}
+        {% endif %} 
+    </tr>
+</table>
+{% endblock %}
+
+
+{% block third_menu %}
+    <tr>
+        <td>
+            <!-- place menu construction here -->
+            <table border='0' align='center' style="border-collapse: collapse;">
+                <tr>
+                    {% for items in nav_loader.main_menu %}
+                        <td class='{{items.1}}'> <a href="/{{items.2}}/"><nobr>{{items.0}}</nobr></a></td><td class='menu_options_split' valign='top'>&nbsp;</td>
+                    {% endfor %}
+                </tr>
+            </table> 
+        </td>
+        <td class='menu_options_split' valign='top'>&lt</td>
+        <td>&nbsp;</td>
+    </tr>
+{% endblock %}
+
+
+{% block content %}
+    {% if form != None %}  
+        <form action="{{nav_loader.reverse}}" method="post" enctype="multipart/form-data">{% csrf_token %}
+            <center><input type="submit" value="Submit" /></center>
+    {% endif %} 
+            {% block status_report %}
+
+            {% endblock %}
+            <hr>
+            <table width='100%' border='1'>
+                <tr>
+                    <td width='50%' valign='top'> 
+                        {% block left_side %}
+
+                        {% endblock %}
+                    </td>
+                    <td valign='top'>
+                        {% block right_side %}
+
+                        {% endblock %}
+                    </td>
+                </tr>
+            </table>
+    {% if form != None %}  
+        </form>
+    {% endif %} 
+{% endblock %}

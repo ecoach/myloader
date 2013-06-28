@@ -1,0 +1,61 @@
+{% extends 'mycoach/data_loader.html' %}
+
+{% block status_report %}
+
+    MTS Characteristic: {{mts_char}}
+    <br>
+    Digestion function: {{digestion_function}}
+    <br>
+    Digestion Columns:
+    {% for item in digestion_columns %}
+        {{item}}, &nbsp;
+    {% endfor %}
+
+{% endblock %}
+
+
+{% block left_side %}
+    <table>
+        <tr>
+            <td>
+    MTS Characteristic:
+            </td>
+            <td>
+    {{ form.mts_char }}
+            </td>
+        </tr>
+        <tr>
+            <td>
+    Digestion function: 
+            </td>
+            <td>
+    {{ form.digestion_function }}
+            </td>
+        </tr>
+        <tr>
+            <td valign='top'>
+    Columns to digest:
+            </td>
+            <td>
+    {{ form.digestion_columns }}
+            </td>
+        </tr>
+    </table>
+{% endblock %}
+
+
+{% block right_side %}
+    <table>
+        <tr>
+            <td class='wizard_report'>
+                <table>
+                    {% for key,val in digestion_result.items %}
+                    <tr>
+                        <td>{{key}}</td><td>{{val}}</td>
+                    </tr>
+                    {% endfor %}
+                </table>
+            </tr>
+        </tr>
+    </table>
+{% endblock %}

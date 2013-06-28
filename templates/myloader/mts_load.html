@@ -1,0 +1,51 @@
+{% extends 'mycoach/data_loader.html' %}
+
+{% block status_report %}
+
+    Digestion name: {{digestion_name}}
+    <br>
+    Toggle action: (Test run or Commit)
+    <br>
+
+{% endblock %}
+
+<!-- 
+    Active digestion id: {{digestion_id}}
+    <br>
+-->
+
+{% block left_side %}
+
+    <table border='0'>
+        </tr> 
+            <td>
+                Digestion name:
+            </td>
+            <td>
+                {{ form.digestion_name }}
+            </td>
+        </tr>
+        <tr>
+            <td>
+                &nbsp;
+            </td>
+            <td class='nolistradio'>
+                {{ form.commit }}
+            </td>
+        <tr>
+    </table>
+
+{% endblock %}
+
+
+{% block right_side %}
+
+    <table>
+        <tr>
+            <td class='wizard_report'>
+                {% include "mycoach/digestion_report.html" %}
+            </td>
+        </tr>
+    </table>
+
+{% endblock %}

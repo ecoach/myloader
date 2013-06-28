@@ -1,0 +1,136 @@
+{% extends 'mycoach/data_loader.html' %}
+
+{% block status_report %}
+
+    Id column name: {{active_id_column}}
+ 
+{% endblock %}
+
+
+{% block left_side %}
+
+    <!-- data file visual -->
+    <table border='0'>
+        <tr>
+            <td>
+                &nbsp;
+            </td>
+            <td class='wizard_report'>
+                <nobr>{{active_col_cnt}} Columns &nbsp;...&nbsp;...&nbsp;...</nobr> <br>
+            </td>
+        </tr>
+        <tr>
+            <td class='wizard_report'>
+                {{active_row_cnt}} Rows <br>
+                ...<br>
+                ...<br>
+                ...<br>
+            </td>
+            <td>
+                <table border='1' width='100%' height='100%'>
+                    <tr>
+                        <td align='center'>
+                            &nbsp;<br>Data File <br>
+                            {{ form.select_id_column }}<br>&nbsp;
+                        </td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+    </table>
+    <!-- end data file visual -->
+    <br>
+    <hr>
+    <br>
+    After remapping ids:
+    <table>
+        <tr><td>&nbsp;</td></tr>
+        <tr>
+            <td class='wizard_report'>
+                Sample ids: &nbsp;
+                {% for item in active_id_sample %}
+                    {{item}}, &nbsp;
+                {% endfor %}...
+            </td>
+        </tr>
+        <tr><td>&nbsp;</td></tr>
+        <tr>
+            <td class='wizard_report'>
+                Duplicate ids: &nbsp;
+                {% for item in duplicate_ids %}
+                    {{item}}, &nbsp;
+                {% endfor %}
+            </td>
+        </tr>
+        <tr><td>&nbsp;</td></tr>
+        <tr>
+            <td class='wizard_report'>
+                Re-mapped ids: &nbsp;
+                {% for item in remapped_ids %}
+                    {{item}}, &nbsp;
+                {% endfor %}
+            </td>
+        </tr>
+    </table>
+
+{% endblock %}
+
+
+{% block right_side %}
+
+    <!-- map file visual -->
+    <table border='0'>
+        <tr>
+            <td>
+                &nbsp;
+            </td>
+            <td class='wizard_report'>
+                <nobr>{{map_file_col_cnt}} Columns &nbsp;...&nbsp;...&nbsp;...</nobr> <br>
+            </td>
+        </tr>
+        <tr>
+            <td class='wizard_report'>
+                {{map_file_row_cnt}} Rows <br>
+                ...<br>
+                ...<br>
+                ...<br>
+            </td>
+            <td>
+                <table border='1' width='100%' height='100%'>
+                    <tr>
+                        <td align='center'>
+                            &nbsp; <br>Map file<br>
+                            <br>&nbsp;
+                        </td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+    </table>
+    <!-- end map file visual -->
+
+    <table>
+        <tr><td>&nbsp;</td></tr>
+        <tr>
+            <td class='wizard_report'>
+                Sample id maps: &nbsp;
+                {% for item in map_file_id_sample %}
+                    {{item}}, &nbsp;
+                {% endfor %}...
+            </td>
+        </tr>
+        <tr><td>&nbsp;</td></tr>
+        <tr>
+            <td class='wizard_report'>
+                Duplicate map ids: {{ map_file_dups }}
+            </td>
+        </tr>
+        <tr><td>&nbsp;</td></tr>
+        <tr>
+            <td class='wizard_report'>
+                Cautionary maps: {{ map_file_reserved }}
+            </td>
+        </tr>
+    </table>
+
+{% endblock %}
