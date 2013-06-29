@@ -17,7 +17,6 @@ urlpatterns = patterns('',
     url(r'^mts_load/', login_required(mts_load_view), name='mts_load'),
     url(r'^archive/', login_required(archive_view), name='archive'),
     url(r'^help/', login_required(help_view), name='help'),
-    url(r'^mp_map_download/', login_required(mp_map_download_view), name='mp_map_download'),
     url(r'^', login_required(archive_view), name='default'),
 )
 

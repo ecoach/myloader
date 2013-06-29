@@ -1,11 +1,7 @@
 from django import forms
 from django.conf import settings
-#from mydata4.models import Source1
-from models import CsvDataFile, CsvMapFile, Digestion, Digestion_Column
+from .models import CsvDataFile, CsvMapFile, Digestion, Digestion_Column
 from datetime import datetime
-from time import ctime
-from django.shortcuts import redirect
-# mydataX imports
 from django.utils.importlib import import_module
 mydata = import_module(settings.MYDATA)
 Source1 = mydata.models.Source1

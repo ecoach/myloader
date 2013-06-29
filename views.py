@@ -3,8 +3,6 @@ from django.views.generic import TemplateView
 from django.http import HttpResponse, HttpResponseRedirect, HttpResponseNotFound
 from django.shortcuts import render_to_response, render, redirect
 from django.conf import settings
-from djangotailoring.views import TailoredDocView
-from djangotailoring.project import getsubjectloader
 from mynav.nav import main_nav, tasks_nav
 from .steps import steps_nav
 from mypump.csvfile import CsvFile, MapFile
@@ -85,41 +83,6 @@ def file_upload_view(request):
         "active_csv_map": active_csv_map,
         "active_csv_data": active_csv_data
     })
-
-def mp_map_download_view(request):
-    import os
-
-    # if not admin don't do it
-    staffmember = request.user.is_staff
-    if not staffmember:
-        return redirect('/')
-
-    # send the results
-    try:
-        file_name = "mp_name_map.csv"
-        file_path = settings.DIR_UPLOAD_DATA + 'other/' + file_name
-        
-        f = open(file_path, 'w')
-        # select MP_Name, user_id from mydata4_Source1 where not MP_Name=user_id group by MP_Name;  
-        new = Source1.objects.exclude(user_id__in=User.objects.filter(is_staff=True).values_list('username', flat=True)).values_list('MP_Name', 'user_id')
-        # old = Source1.objects.mp_names()
-        ss = ""
-        # for nn in mp_names:
-        for nn in new:
-            ss += str(nn[0]) + "," + str(nn[1]) + "\n"
-        ss = ss[0:len(ss)-1]
-        f.write(ss)
-        f.close()
-
-        fsock = open(file_path,"rb")
-        response = HttpResponse(fsock, content_type='application/octet-stream')
-        response['Content-Disposition'] = 'attachment; filename=' + file_name            
-    except IOError:
-        response = HttpResponseNotFound("error creating the file")
-
-    return response
-
-     
 
 def file_review_view(request):
     #Log_Request(request)
