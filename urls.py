@@ -17,6 +17,6 @@ urlpatterns = patterns('',
     url(r'^mts_load/', login_required(mts_load_view), name='mts_load'),
     url(r'^archive/', login_required(archive_view), name='archive'),
     url(r'^help/', login_required(help_view), name='help'),
-    url(r'^', login_required(archive_view), name='default'),
+    url(r'^', login_required(file_upload_view), name='default'),
 )
 
