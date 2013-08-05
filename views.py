@@ -326,7 +326,11 @@ def data_digest_view(request):
             return redirect('myloader:data_digest')
     else:
         form = Data_Loader_Data_Digest_Form(
-            initial = {'digestion_function' : digestion_function_select, 'digestion_columns' : digestion_columns_select, 'mts_char' : mts_char},
+            initial = {
+                'digestion_function' : digestion_function_select, 
+                'digestion_columns' : digestion_columns_select, 
+                'mts_char' : mts_char
+            },
             function_choices = data.functions_tuple(),
             column_choices = data.columns_tuple(),
             mts_char_choices = chars
