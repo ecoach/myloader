@@ -1,3 +1,4 @@
+from django.contrib.admin.views.decorators import staff_member_required
 from django.core.urlresolvers import reverse
 from django.views.generic import TemplateView
 from django.http import HttpResponse, HttpResponseRedirect, HttpResponseNotFound
@@ -23,6 +24,7 @@ configure_source_data = myutils.configure_source_data
 
 # Create your views here.
 
+@staff_member_required
 def file_upload_view(request):
     #Log_Request(request)
 
@@ -84,6 +86,7 @@ def file_upload_view(request):
         "active_csv_data": active_csv_data
     })
 
+@staff_member_required
 def file_review_view(request):
     #Log_Request(request)
 
@@ -211,6 +214,7 @@ def file_review_view(request):
         "map_file_id_sample": map_file_id_sample,
     })
 
+@staff_member_required
 def data_digest_view(request):
     #Log_Request(request)
 
@@ -351,6 +355,7 @@ def data_digest_view(request):
         "digestion_result" : data.get_mts(), 
     })
 
+@staff_member_required
 def mts_load_view(request):
     #Log_Request(request)
 
@@ -457,6 +462,7 @@ def mts_load_view(request):
         "digestion": digestion,
     })
 
+@staff_member_required
 def archive_view(request):
     #Log_Request(request)
 
@@ -507,6 +513,7 @@ def archive_view(request):
         "digestion": digestion,
     })
 
+@staff_member_required
 def help_view(request):
 
     return render(request, 'myloader/help.html', {
