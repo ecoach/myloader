@@ -6,7 +6,7 @@ from django.shortcuts import render_to_response, render, redirect
 from django.conf import settings
 from mynav.nav import main_nav, tasks_nav
 from .steps import steps_nav
-from mypump.csvfile import CsvFile, MapFile
+from .csvfile import CsvFile, MapFile
 from .models import *
 from .forms import ( 
     Data_Loader_File_Upload_Form, 
